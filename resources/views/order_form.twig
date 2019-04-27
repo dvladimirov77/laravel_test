@@ -1,0 +1,56 @@
+{% include 'header.twig' %}
+
+<form action="/order/save/{{ order.id }}" method="post" enctype="multipart/form-data" class="form-horizontal">
+	{{ csrf_field() }}
+	<div class="form-group">
+		<label class="col-sm-2 control-label">email_клиента:</label>
+		<div class="col-sm-4">
+			<input type="text" name="client_email" value="{{ order.client_email }}" class="form-control">
+		</div>
+	</div>
+	<div class="form-group">
+		<label class="col-sm-2 control-label">партнер:</label>
+		<div class="col-sm-4">
+			<select name="partner" class="form-control">
+			{% for partner_id, partner_name in partners %}
+				<option value="{{ partner_id }}"{% if order.partner.id == partner_id %} selected="selected"{% endif %}>{{ partner_name }}</option>
+			{% endfor %}
+			</select>
+		</div>
+	</div>
+	<div class="form-group">
+		<label class="col-sm-2 control-label">продукты:</label>
+		<div class="col-sm-4">
+		{% set total = 0 %}
+		{% for product in order.order_products %}
+			<div>
+				{{ product.product.name }} - {{ product.quantity }} шт.
+			</div>
+		{% set total = total + (product.quantity * product.price) %}
+		{% endfor %}
+		</div>
+	</div>
+	<div class="form-group">
+		<label class="col-sm-2 control-label">статус заказа:</label>
+		<div class="col-sm-3">
+			<select name="status" class="form-control">
+			{% for status_id, status_name in statuses %}
+				<option value="{{ status_id }}"{% if order.status == status_id %} selected="selected"{% endif %}>{{ status_name }}</option>
+			{% endfor %}
+			</select>
+		</div>
+	</div>
+	<div class="form-group">
+		<label class="col-sm-2 control-label">стоимость заказа:</label>
+		<div class="col-sm-3">
+			{{ total }} руб.
+		</div>
+	</div>
+	<div class="form-group">
+		<div class="col-sm-12">
+			<button class="btn btn-outline btn-danger btn-sm">Сохранить</button>
+		</div>
+	</div>
+</form>
+
+{% include 'footer.twig' %}

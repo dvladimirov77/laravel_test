@@ -1,0 +1,52 @@
+{% include 'header.twig' %}
+{{ csrf_field() }}
+<table class="table table-hover table-condensed">
+<thead>
+	<tr>
+		<th>ид_продукта</th>
+		<th>наименование_продукта</th>
+		<th>наименование_поставщика</th>
+		<th>цена</th>
+	</tr>
+</thead>
+<tbody>
+	{% if products %}
+	{% for product in products %}
+	<tr>
+		<td>{{ product.id }}</td>
+		<td>{{ product.name }}</td>
+		<td>{{ product.vendor.name }}</td>
+		<td>
+			{{ product.price }}
+			<a data-product-id="{{ product.id }}" class="btn btn-outline btn-success btn-xs glyphicon glyphicon-pencil price_edit" target="_blanc"></a>
+		</td>
+	</tr>
+	{% endfor %}
+	{% endif %}
+</tbody>
+</table>
+{% include "pagination.twig" %}
+
+<script type="text/javascript">
+$('.price_edit').on('click', function(){
+	
+	id = $(this).data('product-id');
+	
+	if (price = prompt("Введите новую стоимость"))
+	{
+		$.ajax({
+			headers		: {'X-CSRF-TOKEN': $('input[name="_token"]').val()},
+			url			: "/product/ajax/set_price",
+			type		: "post",
+			dataType	: 'json',
+			data		: {'id' : id, 'price' : price},
+			success		: function (json) {
+							location.reload();
+						}
+		});
+	}
+	return false;
+});
+</script>
+
+{% include 'footer.twig' %}

@@ -1,0 +1,60 @@
+{% if pagination.total_count > pagination.on_page %}
+    <ul class="pagination pull-left col-sm-12">
+        {% set pagination = pagination|merge({ 'pages' : (pagination.total_count / pagination.on_page) | round(0, 'ceil') }) %}
+        
+        {% if pagination.page < 5 %}{% set pagination = pagination|merge({ 'start' : 1 }) %}
+        {% elseif pagination.page > (pagination.pages - 5) %}{% set pagination = pagination|merge({ 'start' : (pagination.pages - 10) }) %}
+        {% else %}{% set pagination = pagination|merge({ 'start' : (pagination.page - 5) }) %}
+        {% endif %}
+        
+        {% if pagination.start < 1 %}{% set pagination = pagination|merge({ 'start' : 1 }) %}{% endif %}
+        
+		{% set pagination = pagination|merge({ 'end' : 10 }) %}
+		
+        {% if pagination.pages <= pagination.end %}{% set pagination = pagination|merge({ 'end' : pagination.pages }) %}
+        {% else %}{% set pagination = pagination|merge({ 'end' : pagination.start + 10 }) %}
+        {% endif %}
+        
+        {% if pagination.start > 1 %}
+            {% if pagination.start > 2 %}
+                <li class="footable-page">
+                    <a href="{{ pagination.url }}page=1">|&lt;</a>
+                </li>
+            {% endif %}
+                <li class="footable-page">
+                    <a href="{{ pagination.url }}page={{ pagination.page - 1 }}">&lt;</a>
+                </li>
+            <li class="footable-page">
+                <a>....</a>
+            </li>
+        {% endif %}
+
+        {% for i in pagination.start..pagination.end %}
+            {% if i == pagination.page %}
+                <li class="footable-page active">
+                    <a data-page="{{ i }}" href="#">{{ i }}</a>
+                </li>
+            {% else %}
+                <li class="footable-page">
+                    <a href="{{ pagination.url }}page={{ i }}">{{ i }}</a>
+                </li>
+            {% endif %}
+        {% endfor %}
+
+        {% if pagination.pages > 10 %}
+			{% if pagination.page < pagination.pages %}
+				<li class="footable-page">
+					<a>....</a>
+				</li>
+				<li class="footable-page">
+					<a href="{{ pagination.url }}page={{ pagination.page + 1 }}">&gt;</a>
+				</li>
+				{% if pagination.pages > (pagination.page + 1) %}
+					<li class="footable-page">
+						<a href="{{ pagination.url }}page={{ pagination.pages }}">&gt;|</a>
+					</li>
+				{% endif %}
+			{% endif %}
+        {% endif %}
+    </ul>
+{% endif %}
